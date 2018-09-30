@@ -1,23 +1,44 @@
 package android.coolweather.com.coolweather;
 
+import android.coolweather.com.coolweather.RecyclerView.Bean;
+import android.coolweather.com.coolweather.RecyclerView.BeanAdapter;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ImageActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+
+
+    private  Bean[] beans={new Bean("天王盖地虎",R.drawable.ic_launcher_20),
+                           new Bean("小鸡炖蘑菇",R.drawable.ic_launcher_21),
+                           new Bean("宝塔镇河妖",R.drawable.ic_launcher_22),
+                           new Bean("蘑菇放辣椒",R.drawable.ic_launcher_24),
+                           new Bean("河妖用大招",R.drawable.ic_launcher_25),
+                           new Bean("二楼弯下腰",R.drawable.ic_launcher_26)};
+
+    private List<Bean>beanList=new ArrayList<>();
+    private BeanAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +54,6 @@ public class ImageActivity extends AppCompatActivity {
 
         }
         mDrawerLayout.openDrawer(GravityCompat.START);
-       // navView.setCheckedItem(R.id.nav_call);
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -67,7 +87,41 @@ public class ImageActivity extends AppCompatActivity {
             }
         });
 
+        FloatingActionButton fab=(FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(ImageActivity.this,"嘿嘿嘿",Toast.LENGTH_SHORT).show();
+                Snackbar.make(view,"点右边那个",Snackbar.LENGTH_SHORT)
+                        .setAction("点点点", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(ImageActivity.this,"嘿嘿嘿",Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
+            }
+        });
+
+
+
+        initBean();
+        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.recycler_view);
+        GridLayoutManager layoutManager=new GridLayoutManager(this,2);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter=new BeanAdapter(beanList);
+        recyclerView.setAdapter(adapter);
+
     }
+
+    private void initBean() {
+        beanList.clear();
+        for(int i=0;i<50;i++) {
+            Random random =new Random();
+            int index= random.nextInt(beans.length);
+            beanList.add(beans[index]);
+        }
+    }
+
 
 
 
