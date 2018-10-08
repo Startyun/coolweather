@@ -1,5 +1,6 @@
 package android.coolweather.com.coolweather;
 
+import android.content.Intent;
 import android.coolweather.com.coolweather.RecyclerView.Bean;
 import android.coolweather.com.coolweather.RecyclerView.BeanAdapter;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ImageActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-
+    private SwipeRefreshLayout swipeRefresh;
 
     private  Bean[] beans={new Bean("天王盖地虎",R.drawable.ic_launcher_20),
                            new Bean("小鸡炖蘑菇",R.drawable.ic_launcher_21),
@@ -65,7 +67,9 @@ public class ImageActivity extends AppCompatActivity {
                         Toast.makeText(ImageActivity.this, "点朋友干嘛", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_location:
-                        Toast.makeText(ImageActivity.this, "点位置干嘛", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ImageActivity.this, "点位置干嘛", Toast.LENGTH_SHORT).show();
+                        Intent intent =new Intent(ImageActivity.this,MapActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.nav_mail:
                         Toast.makeText(ImageActivity.this, "点邮箱干嘛", Toast.LENGTH_SHORT).show();
@@ -110,7 +114,14 @@ public class ImageActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         adapter=new BeanAdapter(beanList);
         recyclerView.setAdapter(adapter);
-
+        swipeRefresh =(SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFruits();
+            }
+        });
     }
 
     private void initBean() {
@@ -120,6 +131,28 @@ public class ImageActivity extends AppCompatActivity {
             int index= random.nextInt(beans.length);
             beanList.add(beans[index]);
         }
+    }
+
+
+    private void refreshFruits() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Thread.sleep(2000);
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initBean();
+                        adapter.notifyDataSetChanged();
+                        swipeRefresh.setRefreshing(false);
+                    }
+                });
+            }
+        }).start();
     }
 
 
