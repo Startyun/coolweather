@@ -6,6 +6,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,25 +18,33 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeOption;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResultListener {
 
     public LocationClient mLocationClient;
     private TextView positionText;
     private MapView mapView;
     private BaiduMap baiduMap;
     private boolean isFirstLocate = true;
-
-
+    GeoCoder mSearch = null;
+    private TextView tet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +53,9 @@ public class MapActivity extends AppCompatActivity {
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_map);
         mapView = (MapView) findViewById(R.id.bmapView);
+        tet=(TextView)findViewById(R.id.searchKey);
         baiduMap = mapView.getMap();
+        initcenter();
         baiduMap.setMyLocationEnabled(true);//将“显示当前自己位置”功能开启
         List<String> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -65,7 +76,59 @@ public class MapActivity extends AppCompatActivity {
         } else {
             requestLocation();
         }
+        baiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+
+            @Override
+            public void onMapStatusChangeStart(MapStatus arg0) {
+                 // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onMapStatusChangeFinish(MapStatus arg0) {
+                // TODO Auto-generated method stub
+                 LatLng ptCenter = baiduMap.getMapStatus().target;// 获取地图中心点坐标
+                // 反Geo搜索
+                 mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(ptCenter));
+            }
+            @Override
+            public void onMapStatusChange(MapStatus arg0) {
+                // TODO Auto-generated method stub
+            }
+
+        });
     }
+
+    private void initcenter() {
+
+        mSearch = GeoCoder.newInstance();
+        mSearch.setOnGetGeoCodeResultListener(this);
+
+
+    }
+
+    @Override
+    public void onGetGeoCodeResult(GeoCodeResult result) {
+              //设置地图中心点坐标
+        MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(result.getLocation());
+        baiduMap.animateMapStatus(status);
+        //Toast.makeText(MapActivity.this, result.getAddress(), Toast.LENGTH_LONG).show();
+        tet.setText(result.getAddress());
+    }
+
+
+    @Override
+    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(MapActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
+            return;
+        }
+            baiduMap.clear();
+        baiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
+        tet.setText(result.getAddress());
+
+    }
+
+
 
 
     private void navigateTo(BDLocation location) {
