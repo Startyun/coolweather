@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/position_text_view"
-        android:visibility="gone"/>
-
 
 
     <com.baidu.mapapi.map.MapView
@@ -21,5 +14,23 @@
     </com.baidu.mapapi.map.MapView>
 
 
+    <TextView
+        android:id="@+id/searchKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="目标位置："
+        android:textSize="20sp" />
 
-</LinearLayout>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/marker"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_launcher_28"
+        />
+
+
+
+    </FrameLayout>
