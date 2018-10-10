@@ -6,7 +6,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +18,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.location.Poi;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
@@ -32,12 +37,19 @@ import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
+import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.baidu.mapapi.search.sug.SuggestionSearch;
+import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResultListener {
+public class MapActivity extends AppCompatActivity implements
+        OnGetGeoCoderResultListener,OnGetSuggestionResultListener {
 
+
+    private SuggestionSearch mSuggestionSearch;
     public LocationClient mLocationClient;
     private TextView positionText;
     private MapView mapView;
@@ -45,6 +57,10 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
     private boolean isFirstLocate = true;
     GeoCoder mSearch = null;
     private TextView tet;
+    private AutoCompleteTextView keyWorldsView;
+    private ArrayAdapter<String> sugAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +71,16 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
         mapView = (MapView) findViewById(R.id.bmapView);
         tet=(TextView)findViewById(R.id.searchKey);
         baiduMap = mapView.getMap();
-        initcenter();
+        //中心点模块初始化，注册事件监听
+        mSearch = GeoCoder.newInstance();
+        mSearch.setOnGetGeoCodeResultListener(this);
+        // 初始化sug检索模块，注册事件监听
+        mSuggestionSearch = SuggestionSearch.newInstance();
+        mSuggestionSearch.setOnGetSuggestionResultListener(this);
+        keyWorldsView = (AutoCompleteTextView) findViewById(R.id.searchkey1);
+        sugAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line);
+        keyWorldsView.setAdapter(sugAdapter);
         baiduMap.setMyLocationEnabled(true);//将“显示当前自己位置”功能开启
         List<String> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -76,6 +101,8 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
         } else {
             requestLocation();
         }
+
+        //中心点定位
         baiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
 
             @Override
@@ -96,33 +123,62 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
             }
 
         });
+
+        //sug检索
+              keyWorldsView.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                                          int arg2, int arg3) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2,
+                                      int arg3) {
+                if (cs.length() <= 0) {
+                    return;
+                }
+                String city = ((TextView) findViewById(R.id.city)).getText().toString();
+                mSuggestionSearch
+                        .requestSuggestion((new SuggestionSearchOption())
+                                .keyword(cs.toString()).city(city));
+            }
+        });
     }
 
-    private void initcenter() {
-
-        mSearch = GeoCoder.newInstance();
-        mSearch.setOnGetGeoCodeResultListener(this);
 
 
+
+
+
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     public void onGetGeoCodeResult(GeoCodeResult result) {
-              //设置地图中心点坐标
-        MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(result.getLocation());
-        baiduMap.animateMapStatus(status);
-        //Toast.makeText(MapActivity.this, result.getAddress(), Toast.LENGTH_LONG).show();
-        tet.setText(result.getAddress());
+
     }
 
 
     @Override
     public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(MapActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
-            return;
-        }
-            baiduMap.clear();
+
         baiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
         tet.setText(result.getAddress());
 
@@ -176,6 +232,7 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
         LocationClientOption option = new LocationClientOption();
         option.setScanSpan(5000);   //每5秒钟刷新一次
         option.setCoorType("bd09ll");
+        option.setIsNeedLocationPoiList(true);
         option.setIsNeedAddress(true);   //获取当前详细的地址信息
         //option.setLocationMode(LocationClientOption.LocationMode.Device_Sensors);//指定为GPS模式
         mLocationClient.setLocOption(option);
@@ -200,6 +257,7 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
     protected void onDestroy() {
         super.onDestroy();
         mLocationClient.stop();
+        mSuggestionSearch.destroy();
         mapView.onDestroy();
         baiduMap.setMyLocationEnabled(false);
     }
@@ -237,7 +295,19 @@ public class MapActivity extends AppCompatActivity implements OnGetGeoCoderResul
 
 
         }
-
-
     }
+
+    @Override
+    public void onGetSuggestionResult(SuggestionResult res) {
+        if (res == null || res.getAllSuggestions() == null) {
+            return;
+        }
+        sugAdapter.clear();
+        for (SuggestionResult.SuggestionInfo info : res.getAllSuggestions()) {
+            if (info.key != null)
+                sugAdapter.add(info.key);
+        }
+        sugAdapter.notifyDataSetChanged();
+    }
+
 }

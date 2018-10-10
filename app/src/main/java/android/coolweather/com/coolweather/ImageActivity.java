@@ -75,7 +75,8 @@ public class ImageActivity extends AppCompatActivity {
                         Toast.makeText(ImageActivity.this, "点邮箱干嘛", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_task:
-                        Toast.makeText(ImageActivity.this, "点任务干嘛", Toast.LENGTH_SHORT).show();
+                        Intent intent1 =new Intent(ImageActivity.this,SearchActivity.class);
+                        startActivity(intent1);
                         break;
                 }
                 return true;
