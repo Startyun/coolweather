@@ -15,11 +15,11 @@
             android:icon="@mipmap/ic_launcher_11"
             android:title="位置"/>
         <item
-            android:id="@+id/nav_mail"
+            android:id="@+id/nav_marker"
             android:icon="@mipmap/ic_launcher_14"
-            android:title="邮箱"/>
+            android:title="标记"/>
         <item
-            android:id="@+id/nav_task"
+            android:id="@+id/nav_search"
             android:icon="@mipmap/ic_launcher_18"
             android:title="搜索" />
 

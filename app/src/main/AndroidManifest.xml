@@ -55,13 +55,17 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
 
         <activity
             android:name=".ImageActivity"
             android:label="大头小黑" />
-        <activity android:name=".MapActivity" />
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".menu.MapActivity" />
+        <activity android:name=".menu.SearchActivity" />
+        <activity
+            android:name=".menu.MarkerActivity"
+            android:label="@string/title_activity_marker"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

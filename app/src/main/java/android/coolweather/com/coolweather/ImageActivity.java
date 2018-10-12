@@ -3,6 +3,9 @@ package android.coolweather.com.coolweather;
 import android.content.Intent;
 import android.coolweather.com.coolweather.RecyclerView.Bean;
 import android.coolweather.com.coolweather.RecyclerView.BeanAdapter;
+import android.coolweather.com.coolweather.menu.MapActivity;
+import android.coolweather.com.coolweather.menu.MarkerActivity;
+import android.coolweather.com.coolweather.menu.SearchActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -67,15 +70,15 @@ public class ImageActivity extends AppCompatActivity {
                         Toast.makeText(ImageActivity.this, "点朋友干嘛", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_location:
-                        //Toast.makeText(ImageActivity.this, "点位置干嘛", Toast.LENGTH_SHORT).show();
-                        Intent intent =new Intent(ImageActivity.this,MapActivity.class);
+                        Intent intent =new Intent(ImageActivity.this,SearchActivity.class);
                         startActivity(intent);
                         break;
-                    case R.id.nav_mail:
-                        Toast.makeText(ImageActivity.this, "点邮箱干嘛", Toast.LENGTH_SHORT).show();
+                    case R.id.nav_marker:
+                        Intent intent2=new Intent(ImageActivity.this,MarkerActivity.class);
+                        startActivity(intent2);
                         break;
-                    case R.id.nav_task:
-                        Intent intent1 =new Intent(ImageActivity.this,SearchActivity.class);
+                    case R.id.nav_search:
+                        Intent intent1 =new Intent(ImageActivity.this,MapActivity.class);
                         startActivity(intent1);
                         break;
                 }

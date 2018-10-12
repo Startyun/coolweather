@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapActivity">
+    tools:context=".menu.MapActivity">
 
 
     <com.baidu.mapapi.map.MapView
@@ -14,53 +14,50 @@
     </com.baidu.mapapi.map.MapView>
 
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:id="@+id/city"
-        android:textColor="#000"
-        android:text="目的地:"/>
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="全国范围内查找："
+            android:textColor="#000" />
 
 
 
-    <AutoCompleteTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/searchkey1"
-        android:text="请输入"
-        />
+        <AutoCompleteTextView
+            android:id="@+id/searchkey1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入目的地" />
 
 
     </LinearLayout>
 
 
-
     <TextView
         android:id="@+id/searchKey"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:text="目标位置："
-        android:textSize="20sp" />
-
-
-
-    <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/marker"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_launcher_28"
-        />
+        android:layout_marginTop="200dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="#000"/>
 
 
 
-    </FrameLayout>
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/marker"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:src="@drawable/ic_launcher_29"-->
+        <!--/>-->
+
+
+
+    </RelativeLayout>
