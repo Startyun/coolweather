@@ -7,6 +7,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,29 +28,39 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeOption;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
+import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.baidu.mapapi.search.sug.SuggestionSearch;
+import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements
-        OnGetGeoCoderResultListener {
+        OnGetGeoCoderResultListener,OnGetSuggestionResultListener {
 
 
+    private SuggestionSearch mSuggestionSearch;
     public LocationClient mLocationClient;
     private MapView mapView;
     private BaiduMap baiduMap;
     private boolean isFirstLocate = true;
     GeoCoder mSearch = null;
     private TextView tet;
+    private AutoCompleteTextView keyWorldsView;
+    private ArrayAdapter<String> sugAdapter;
+    private TextView tet1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +71,20 @@ public class SearchActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_search);
         mapView = (MapView) findViewById(R.id.bmapView);
         tet=(TextView)findViewById(R.id.searchKey);
+        tet1=(TextView)findViewById(R.id.city);
         baiduMap = mapView.getMap();
         //中心点模块初始化，注册事件监听
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(this);
+        // 初始化sug检索模块，注册事件监听
+        mSuggestionSearch = SuggestionSearch.newInstance();
+        mSuggestionSearch.setOnGetSuggestionResultListener(this);
+        keyWorldsView = (AutoCompleteTextView) findViewById(R.id.searchkey1);
+        sugAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line);
+        keyWorldsView.setAdapter(sugAdapter);
         baiduMap.setMyLocationEnabled(true);//将“显示当前自己位置”功能开启
+        //List<String> dataList=new ArrayList<>();
         final List<String> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(SearchActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -85,7 +110,7 @@ public class SearchActivity extends AppCompatActivity implements
 
             @Override
             public void onMapStatusChangeStart(MapStatus arg0) {
-                // TODO Auto-generated method stub
+                 // TODO Auto-generated method stub
             }
 
             @Override
@@ -96,9 +121,9 @@ public class SearchActivity extends AppCompatActivity implements
             @Override
             public void onMapStatusChangeFinish(MapStatus arg0) {
                 // TODO Auto-generated method stub
-                LatLng ptCenter = baiduMap.getMapStatus().target;// 获取地图中心点坐标
+                 LatLng ptCenter = baiduMap.getMapStatus().target;// 获取地图中心点坐标
                 // 反Geo搜索
-                mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(ptCenter));
+                 mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(ptCenter));
             }
             @Override
             public void onMapStatusChange(MapStatus arg0) {
@@ -107,6 +132,45 @@ public class SearchActivity extends AppCompatActivity implements
 
         });
 
+        //sug检索
+              keyWorldsView.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                                          int arg2, int arg3) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2,
+                                      int arg3) {
+                if (cs.length() <= 0) {
+                    return;
+                }
+                String city = ((TextView) findViewById(R.id.city)).getText().toString();
+                mSuggestionSearch
+                        .requestSuggestion((new SuggestionSearchOption())
+                                .keyword(cs.toString()).city(city));
+            }
+        });
+
+        keyWorldsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String  drr=  adapterView.getItemAtPosition(i).toString();
+                //Toast.makeText(SearchActivity.this, drr, Toast.LENGTH_SHORT).show();
+                String city = ((TextView) findViewById(R.id.city)).getText().toString();
+                mSearch.geocode(new GeoCodeOption()
+                        .city(city)
+                        .address(drr));
+
+            }
+        });
 
     }
 
@@ -182,6 +246,7 @@ public class SearchActivity extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         mLocationClient.stop();
+        mSuggestionSearch.destroy();
         mapView.onDestroy();
         baiduMap.setMyLocationEnabled(false);
     }
@@ -210,7 +275,7 @@ public class SearchActivity extends AppCompatActivity implements
 
 
     public class MyLocationListener implements BDLocationListener {
-        @Override
+            @Override
         public void onReceiveLocation(final BDLocation location) {
             if (location.getLocType() == BDLocation.TypeGpsLocation
                     || location.getLocType() == BDLocation.TypeNetWorkLocation) {
@@ -221,10 +286,29 @@ public class SearchActivity extends AppCompatActivity implements
     }
 
 
-
     /*正向地理编码*/
     @Override
     public void onGetGeoCodeResult(GeoCodeResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(SearchActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
+            return;
+        }
+        baiduMap.clear();
+
+        /*给该地标记*/
+        baiduMap.addOverlay(new MarkerOptions().position(result.getLocation())
+                .icon(BitmapDescriptorFactory
+                        .fromResource(R.mipmap.ic_launcher_31)));
+
+        /*定位到该地*/
+        baiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
+
+//
+//        StringBuilder builder=new StringBuilder();
+//        builder.append("纬度：").append(result.getLocation().latitude).append(",经度：")
+//                .append(result.getLocation().longitude);
+//
+//           Toast.makeText(SearchActivity.this,builder, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -242,12 +326,30 @@ public class SearchActivity extends AppCompatActivity implements
 //                .icon(BitmapDescriptorFactory.
 //                        fromResource(R.mipmap.ic_launcher_30)));
 
-        // baiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
+       // baiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
 
 
-        tet.setText(result.getAddress()+result.getSematicDescription());
+
+
+        //tet.setText(result.getAddress()+result.getSematicDescription());
 
     }
 
+
+    @Override
+    public void onGetSuggestionResult(SuggestionResult res) {
+        if (res == null || res.getAllSuggestions() == null) {
+            return;
+        }
+        sugAdapter.clear();
+        for (SuggestionResult.SuggestionInfo info : res.getAllSuggestions()) {
+            if (info.key != null)
+            {
+                sugAdapter.add(info.key);
+            }
+
+        }
+        sugAdapter.notifyDataSetChanged();
+    }
 
 }

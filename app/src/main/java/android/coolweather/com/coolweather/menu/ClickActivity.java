@@ -18,10 +18,11 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
@@ -35,10 +36,10 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MarkerActivity extends AppCompatActivity implements
+public class ClickActivity extends AppCompatActivity implements
         OnGetGeoCoderResultListener {
 
-
+    private BitmapDescriptor bitmap;
     public LocationClient mLocationClient;
     private MapView mapView;
     private BaiduMap baiduMap;
@@ -52,61 +53,90 @@ public class MarkerActivity extends AppCompatActivity implements
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(new MyLocationListener());
         SDKInitializer.initialize(getApplicationContext());
-        setContentView(R.layout.activity_marker);
+        setContentView(R.layout.activity_click);
         mapView = (MapView) findViewById(R.id.bmapView);
         tet=(TextView)findViewById(R.id.searchKey);
         baiduMap = mapView.getMap();
         //中心点模块初始化，注册事件监听
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(this);
+        mapView.removeViewAt(1);
         baiduMap.setMyLocationEnabled(true);//将“显示当前自己位置”功能开启
         final List<String> permissionList = new ArrayList<>();
-        if (ContextCompat.checkSelfPermission(MarkerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+        if (ContextCompat.checkSelfPermission(ClickActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-        if (ContextCompat.checkSelfPermission(MarkerActivity.this, Manifest.permission.READ_PHONE_STATE) !=
+        if (ContextCompat.checkSelfPermission(ClickActivity.this, Manifest.permission.READ_PHONE_STATE) !=
                 PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.READ_PHONE_STATE);
         }
-        if (ContextCompat.checkSelfPermission(MarkerActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+        if (ContextCompat.checkSelfPermission(ClickActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED) {
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
         if (!permissionList.isEmpty()) {
             String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(MarkerActivity.this, permissions, 1);
+            ActivityCompat.requestPermissions(ClickActivity.this, permissions, 1);
         } else {
             requestLocation();
         }
 
-        //中心点定位
-        baiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+
+
+        baiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener(){
 
             @Override
-            public void onMapStatusChangeStart(MapStatus arg0) {
-                // TODO Auto-generated method stub
+            public boolean onMapPoiClick(MapPoi arg0) {
+                return false;
             }
 
             @Override
-            public void onMapStatusChangeStart(MapStatus mapStatus, int i) {
+            public void onMapClick(LatLng latLng){
 
+                double latitude = latLng.latitude;
+                double longitude = latLng.longitude;
+                baiduMap.clear();
+                LatLng point = new LatLng(latitude, longitude);
+                bitmap = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_31);
+                MarkerOptions options = new MarkerOptions().position(point).icon(bitmap);
+                baiduMap.addOverlay(options);
+                ReverseGeoCodeOption op = new ReverseGeoCodeOption();
+                op.location(latLng);
+                mSearch.reverseGeoCode(op);
             }
-
-            @Override
-            public void onMapStatusChangeFinish(MapStatus arg0) {
-                // TODO Auto-generated method stub
-                LatLng ptCenter = baiduMap.getMapStatus().target;// 获取地图中心点坐标
-                // 反Geo搜索
-                mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(ptCenter));
-            }
-            @Override
-            public void onMapStatusChange(MapStatus arg0) {
-                // TODO Auto-generated method stub
-            }
-
         });
 
+//        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(MarkerActivity marker) {
+//                TextView tet3;
+//                int index = marker.getZIndex();
+//                tet3 = new TextView(getApplicationContext());
+//                tet3.setBackgroundResource(R.drawable.ic_launcher_22);
+//                tet3.setTextColor(getApplicationContext().getResources().getColor(R.color.colorPrimary));
+//                tet3.setTextSize(12);
+//                tet3.setText("地址");
+//
+//                InfoWindow mInfoWindow;
+//
+//               LatLng ll = marker.getPosition();//获取经纬度
+//                Point p = baiduMap.getProjection().toScreenLocation(ll);
+//                p.y -= 47;
+//                LatLng llInfo = baiduMap.getProjection().fromScreenLocation(p);
+//
+//
+//                Toast.makeText(ClickActivity.this,llInfo.toString(), Toast.LENGTH_SHORT).show();
+//
+//
+//                mInfoWindow = new InfoWindow(tet3, llInfo , -47);
+//
+//
+//                //baiduMap.showInfoWindow(mInfoWindow);
+//                return true;
+//
+//            }
+//        });
 
     }
 
@@ -234,7 +264,7 @@ public class MarkerActivity extends AppCompatActivity implements
     @Override
     public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(MarkerActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
+            Toast.makeText(ClickActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
             return;
         }
 //        baiduMap.clear();
@@ -245,8 +275,7 @@ public class MarkerActivity extends AppCompatActivity implements
         // baiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
 
 
-        tet.setText(result.getAddress()+result.getSematicDescription());
-
+        Toast.makeText(ClickActivity.this, result.getAddress()+result.getSematicDescription(), Toast.LENGTH_LONG).show();
     }
 
 

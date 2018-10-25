@@ -39,7 +39,7 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="8hXVHrudo46Vzipcgt2EQsP1X7yBM7H0" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".Boot.BootActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,12 +60,29 @@
         <activity
             android:name=".ImageActivity"
             android:label="大头小黑" />
-        <activity android:name=".menu.MapActivity" />
         <activity android:name=".menu.SearchActivity" />
+        <activity android:name=".menu.MarkerActivity" />
         <activity
-            android:name=".menu.MarkerActivity"
+            android:name=".menu.ClickActivity"
             android:label="@string/title_activity_marker"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".MainActivity" />
+
+        <service
+            android:name=".service.MyService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".menu.PhotoActivity" />
+        <activity android:name=".menu.PoiActivity" />
+        <activity android:name=".menu.BadiduActivity" />
+        <activity android:name=".menu.BaiduActivity" />
+        <activity android:name=".ItemClick.DaXiaGu" />
+        <activity android:name=".ItemClick.DaBaoJiao" />
+        <activity android:name=".ItemClick.AiQingHai" />
+        <activity android:name=".ItemClick.PuLuoWangSi" />
+        <activity android:name=".ItemClick.TaiJiLing" />
+        <activity android:name=".ItemClick.BuLaGe"></activity>
     </application>
 
 </manifest>

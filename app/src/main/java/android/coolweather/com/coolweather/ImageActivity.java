@@ -3,9 +3,12 @@ package android.coolweather.com.coolweather;
 import android.content.Intent;
 import android.coolweather.com.coolweather.RecyclerView.Bean;
 import android.coolweather.com.coolweather.RecyclerView.BeanAdapter;
-import android.coolweather.com.coolweather.menu.MapActivity;
-import android.coolweather.com.coolweather.menu.MarkerActivity;
+import android.coolweather.com.coolweather.menu.BaiduActivity;
+import android.coolweather.com.coolweather.menu.PoiActivity;
 import android.coolweather.com.coolweather.menu.SearchActivity;
+import android.coolweather.com.coolweather.menu.ClickActivity;
+import android.coolweather.com.coolweather.menu.MarkerActivity;
+import android.coolweather.com.coolweather.menu.PhotoActivity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -34,13 +37,13 @@ public class ImageActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private SwipeRefreshLayout swipeRefresh;
-
-    private  Bean[] beans={new Bean("天王盖地虎",R.drawable.ic_launcher_20),
-                           new Bean("小鸡炖蘑菇",R.drawable.ic_launcher_21),
-                           new Bean("宝塔镇河妖",R.drawable.ic_launcher_22),
-                           new Bean("蘑菇放辣椒",R.drawable.ic_launcher_24),
-                           new Bean("河妖用大招",R.drawable.ic_launcher_25),
-                           new Bean("二楼弯下腰",R.drawable.ic_launcher_26)};
+    private CircleImageView icon_image;
+    private  Bean[] beans={new Bean("美国大峡谷",R.drawable.ic_launcher_44),
+                           new Bean("澳大利亚大堡礁",R.drawable.ic_launcher_45),
+                           new Bean("爱琴海",R.drawable.ic_launcher_40),
+                           new Bean("普罗旺斯",R.drawable.ic_launcher_41),
+                           new Bean("泰姬陵",R.drawable.ic_launcher_42),
+                           new Bean("布拉格城堡",R.drawable.ic_launcher_43)};
 
     private List<Bean>beanList=new ArrayList<>();
     private BeanAdapter adapter;
@@ -52,6 +55,7 @@ public class ImageActivity extends AppCompatActivity {
         Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout1);
+        icon_image=(CircleImageView)findViewById(R.id.icon_image);
         NavigationView navView=(NavigationView)findViewById(R.id.nav_view);
         ActionBar actionBar=getSupportActionBar();
         if(actionBar !=null) {
@@ -64,22 +68,26 @@ public class ImageActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_call:
-                       Toast.makeText(ImageActivity.this, "点电话干嘛", Toast.LENGTH_SHORT).show();
-                       break;
+                        Intent intent4=new Intent(ImageActivity.this,BaiduActivity.class);
+                        startActivity(intent4);                       break;
                     case R.id.nav_friends:
-                        Toast.makeText(ImageActivity.this, "点朋友干嘛", Toast.LENGTH_SHORT).show();
+                        Intent intent3=new Intent(ImageActivity.this,PoiActivity.class);
+                        startActivity(intent3);
                         break;
                     case R.id.nav_location:
-                        Intent intent =new Intent(ImageActivity.this,SearchActivity.class);
+                        Intent intent =new Intent(ImageActivity.this,MarkerActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.nav_marker:
-                        Intent intent2=new Intent(ImageActivity.this,MarkerActivity.class);
+                        Intent intent2=new Intent(ImageActivity.this,ClickActivity.class);
                         startActivity(intent2);
                         break;
                     case R.id.nav_search:
-                        Intent intent1 =new Intent(ImageActivity.this,MapActivity.class);
+                        Intent intent1 =new Intent(ImageActivity.this,SearchActivity.class);
                         startActivity(intent1);
+                        break;
+                    case R.id.nav_4:
+
                         break;
                 }
                 return true;
@@ -126,6 +134,7 @@ public class ImageActivity extends AppCompatActivity {
                 refreshFruits();
             }
         });
+
     }
 
     private void initBean() {

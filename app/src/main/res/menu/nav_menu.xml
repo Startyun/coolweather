@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">'
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
+
         <item
             android:id="@+id/nav_call"
             android:icon="@mipmap/ic_launcher_13"
-            android:title="电话" />
+            android:title="百度" />
+
+
+  <item android:title="百度地图搜索">
+    <menu>
 
         <item
             android:id="@+id/nav_friends"
-            android:icon="@mipmap/ic_launcher_10"
-            android:title="朋友"/>
+            android:icon="@mipmap/ic_launcher_36"
+            android:title="poi"/>
         <item
             android:id="@+id/nav_location"
             android:icon="@mipmap/ic_launcher_11"
@@ -23,7 +28,8 @@
             android:icon="@mipmap/ic_launcher_18"
             android:title="搜索" />
 
-
+    </menu>
+  </item>
 
 
 
@@ -41,6 +47,10 @@
                     android:id="@+id/nav_3"
                     android:icon="@mipmap/ic_launcher_16"
                     android:title="皮这一下很开心~"/>
+                <item
+                    android:id="@+id/nav_4"
+                    android:icon="@mipmap/ic_launcher_16"
+                    android:title="秘密花园"/>
 
             </menu>
         </item>
