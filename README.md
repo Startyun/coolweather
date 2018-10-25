@@ -1,1 +1,1 @@
-# coolweather
+# 基于coolweather的后续编写，加入百度地图搜索及定位功能
