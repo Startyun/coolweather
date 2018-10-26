@@ -75,7 +75,6 @@
 
         <activity android:name=".menu.PhotoActivity" />
         <activity android:name=".menu.PoiActivity" />
-        <activity android:name=".menu.BadiduActivity" />
         <activity android:name=".menu.BaiduActivity" />
         <activity android:name=".ItemClick.DaXiaGu" />
         <activity android:name=".ItemClick.DaBaoJiao" />

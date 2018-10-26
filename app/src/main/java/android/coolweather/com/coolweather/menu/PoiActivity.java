@@ -80,7 +80,6 @@ public class PoiActivity extends AppCompatActivity implements
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_poi);
         mapView = (MapView) findViewById(R.id.bmapView);
-        tet=(TextView)findViewById(R.id.searchKey);
         baiduMap = mapView.getMap();
         //中心点模块初始化，注册事件监听
         mSearch = GeoCoder.newInstance();

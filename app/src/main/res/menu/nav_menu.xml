@@ -47,10 +47,10 @@
                     android:id="@+id/nav_3"
                     android:icon="@mipmap/ic_launcher_16"
                     android:title="皮这一下很开心~"/>
-                <item
-                    android:id="@+id/nav_4"
-                    android:icon="@mipmap/ic_launcher_16"
-                    android:title="秘密花园"/>
+                <!--<item-->
+                    <!--android:id="@+id/nav_4"-->
+                    <!--android:icon="@mipmap/ic_launcher_16"-->
+                    <!--android:title="秘密花园"/>-->
 
             </menu>
         </item>

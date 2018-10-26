@@ -25,7 +25,7 @@ public class BusLineOverlay extends OverlayManager {
 
     /**
      * 构造函数
-     * 
+     *
      * @param baiduMap
      *            该BusLineOverlay所引用的 BaiduMap 对象
      */

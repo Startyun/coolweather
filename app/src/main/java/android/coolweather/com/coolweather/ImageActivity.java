@@ -86,9 +86,9 @@ public class ImageActivity extends AppCompatActivity {
                         Intent intent1 =new Intent(ImageActivity.this,SearchActivity.class);
                         startActivity(intent1);
                         break;
-                    case R.id.nav_4:
+//                    case R.id.nav_4:
 
-                        break;
+//                        break;
                 }
                 return true;
             }
