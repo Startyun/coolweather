@@ -59,7 +59,7 @@
 
         <activity
             android:name=".ImageActivity"
-            android:label="大头小黑" />
+            android:label="世界名胜" />
         <activity android:name=".menu.SearchActivity" />
         <activity android:name=".menu.MarkerActivity" />
         <activity
@@ -81,7 +81,8 @@
         <activity android:name=".ItemClick.AiQingHai" />
         <activity android:name=".ItemClick.PuLuoWangSi" />
         <activity android:name=".ItemClick.TaiJiLing" />
-        <activity android:name=".ItemClick.BuLaGe"></activity>
+        <activity android:name=".ItemClick.BuLaGe" />
+        <activity android:name=".menu.AcgclubActivity"></activity>
     </application>
 
 </manifest>

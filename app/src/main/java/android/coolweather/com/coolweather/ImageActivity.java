@@ -3,6 +3,7 @@ package android.coolweather.com.coolweather;
 import android.content.Intent;
 import android.coolweather.com.coolweather.RecyclerView.Bean;
 import android.coolweather.com.coolweather.RecyclerView.BeanAdapter;
+import android.coolweather.com.coolweather.menu.AcgclubActivity;
 import android.coolweather.com.coolweather.menu.BaiduActivity;
 import android.coolweather.com.coolweather.menu.PoiActivity;
 import android.coolweather.com.coolweather.menu.SearchActivity;
@@ -86,9 +87,10 @@ public class ImageActivity extends AppCompatActivity {
                         Intent intent1 =new Intent(ImageActivity.this,SearchActivity.class);
                         startActivity(intent1);
                         break;
-//                    case R.id.nav_4:
-
-//                        break;
+                    case R.id.nav_4:
+                        Intent intent5 =new Intent(ImageActivity.this,AcgclubActivity.class);
+                        startActivity(intent5);
+                        break;
                 }
                 return true;
             }
