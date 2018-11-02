@@ -59,7 +59,7 @@
 
         <activity
             android:name=".ImageActivity"
-            android:label="世界名胜" />
+            android:label="大头巨头" />
         <activity android:name=".menu.SearchActivity" />
         <activity android:name=".menu.MarkerActivity" />
         <activity

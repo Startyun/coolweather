@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -35,7 +36,7 @@ public class BootActivity extends AppCompatActivity {
     private final int time = 3600;
     private boolean lag = true;
     private ImageView bootimage;
-    private Button btn2;
+    private TextView btn2;
     int flag = 0 ;
 
     @Override
@@ -70,7 +71,7 @@ public class BootActivity extends AppCompatActivity {
 
 
         /*按钮点击跳过*/
-        btn2=(Button)findViewById(R.id.btn2);
+        btn2=(TextView) findViewById(R.id.btn2);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

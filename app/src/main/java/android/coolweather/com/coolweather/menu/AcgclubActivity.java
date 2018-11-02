@@ -1,5 +1,6 @@
 package android.coolweather.com.coolweather.menu;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.coolweather.com.coolweather.R;
 import android.coolweather.com.coolweather.WeatherActivity;
@@ -29,6 +30,7 @@ public class AcgclubActivity extends AppCompatActivity {
 
     private TextView tet7;
     private ImageView ima;
+    public ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class AcgclubActivity extends AppCompatActivity {
 
     private void loadpicture() {
         String url="https://rabtman.com/api/v2/acgclub/pictures";
+        showProgressDialog();
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -58,7 +61,6 @@ public class AcgclubActivity extends AppCompatActivity {
                      title=jsonObject1.getString("title");
                      JSONArray jsonArray1=jsonObject1.getJSONArray("imgUrls");
                      image=jsonArray1.getString(0);
-                     //loadpicture1(image);
                  }catch (Exception e){
                      e.printStackTrace();
 
@@ -68,6 +70,7 @@ public class AcgclubActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        closeProgressDialog();
                         tet7.setText(finalTitle);
                         Glide.with(AcgclubActivity.this).load(finalImage).into(ima);
 
@@ -84,6 +87,27 @@ public class AcgclubActivity extends AppCompatActivity {
         });
     }
 
+    /*
+     * 显示进度对话框*/
+    private void showProgressDialog() {
+        if(progressDialog ==null) {
+            progressDialog =new ProgressDialog(this);
+            progressDialog.setMessage("正在加载");
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+        progressDialog.show();
+    }
+
+
+
+
+    /*
+     * 关闭进度对话框*/
+    private void closeProgressDialog() {
+        if(progressDialog !=null) {
+            progressDialog.dismiss();
+        }
+    }
 
 
 
